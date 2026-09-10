@@ -1,0 +1,326 @@
+DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kholkar Notes — B.Com Prog & Hons Made Simple</title>
+<style>
+  :root{
+    --paper: #F6F1E4;
+    --ink: #1B2A4A;
+    --ink-soft: #435071;
+    --red: #A6362C;
+    --gold: #B8912E;
+    --line: #DCD3BC;
+    --card: #FFFEFA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    line-height:1.5;
+  }
+  header{
+    border-bottom: 2px solid var(--ink);
+    padding: 20px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  header .brand{ font-size: 22px; font-weight:700; }
+  header .brand span{ color: var(--red); }
+  header nav{ font-family: -apple-system, sans-serif; font-size: 14px; color: var(--ink-soft); }
+view{ display:none; }
+  .view.active{ display:block; }
+
+  .gate-wrap{ min-height: 78vh; display:flex; align-items:center; justify-content:center; padding: 24px; }
+  .gate-box{ max-width: 380px; width:100%; }
+  .gate-box .stamp{
+    display:inline-block; border: 1.5px solid var(--red); color: var(--red);
+    font-family: -apple-system, sans-serif; font-size: 12px; padding: 3px 10px;
+    border-radius: 3px; transform: rotate(-2deg); margin-bottom: 16px;
+  }
+  .gate-box h1{ font-size: 26px; font-weight:400; margin-bottom: 8px; }
+  .gate-box p{ font-family:-apple-system, sans-serif; color:var(--ink-soft); font-size:14px; margin-bottom:22px; }
+  .field{ margin-bottom: 14px; }
+  .field label{ font-family:-apple-system, sans-serif; font-size:12.5px; color:var(--ink-soft); display:block; margin-bottom:5px; }
+  .field input{
+    width:100%; font-family:-apple-system, sans-serif; font-size:15px;
+    padding: 11px 12px; border: 1px solid var(--line); border-radius: 4px;
+    background: var(--card); color: var(--ink);
+  }
+  .field input:focus{ outline: none; border-color: var(--red); }
+  .gate-btn{
+    width:100%; font-family:-apple-system, sans-serif; font-size:15px; font-weight:600;
+    background: var(--ink); color: var(--paper); border:none; padding:13px; border-radius:4px;
+    cursor:pointer; margin-top: 6px;
+  }
+  .gate-err{ font-family:-apple-system, sans-serif; font-size:12.5px; color: var(--red); margin-top:8px; display:none; }
+
+  .hero{ padding: 44px 24px 30px; max-width: 720px; }
+  .hero .stamp{
+    display:inline-block; border: 1.5px solid var(--red); color: var(--red);
+    font-family: -apple-system, sans-serif; font-size: 12px; padding: 3px 10px;
+    border-radius: 3px; transform: rotate(-2deg); margin-bottom: 18px;
+  }
+  .hero h1{ font-size: 34px; line-height:1.15; margin-bottom: 10px; font-weight: 400; }
+  .hero h1 em{ font-style: normal; color: var(--red); }
+  .hero p{ font-family: -apple-system, sans-serif; color: var(--ink-soft); font-size: 15px; max-width: 520px; }
+
+  .section-title{
+    font-size: 15px; font-family: -apple-system, sans-serif; color: var(--ink-soft);
+    border-bottom: 1px solid var(--line); padding-bottom: 10px; margin: 0 24px 18px; max-width:900px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .section-title .switch-sem{ color: var(--red); cursor:pointer; text-decoration:underline; }
+  .grid{ display:grid; grid-template-columns: 1fr; gap: 12px; padding: 0 24px 50px; max-width: 900px; }
+  .card{
+    background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--gold);
+    padding: 16px 18px; border-radius: 3px; cursor:pointer;
+  }
+  .card h3{ font-size:18px; font-weight:400; margin-bottom:4px; }
+  .card p{ font-family: -apple-system, sans-serif; font-size: 13px; color: var(--ink-soft); }
+  .card.dim{ opacity:.5; cursor:default; }
+  .empty-note{ font-family:-apple-system, sans-serif; color:var(--ink-soft); font-size:14px; padding: 10px 0; }
+
+  .back-link{
+    font-family: -apple-system, sans-serif; font-size: 13px; color: var(--ink-soft);
+    text-decoration:none; display:inline-block; margin: 18px 24px 0; cursor:pointer;
+  }
+
+  .subject-header{ padding: 10px 24px 0; max-width: 760px; }
+  .subject-header h1{ font-size: 28px; font-weight: 400; margin: 6px 0 4px; }
+  .subject-header .sub{ font-family:-apple-system, sans-serif; color:var(--ink-soft); font-size:13px; margin-bottom: 26px; }
+
+  .cat-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 24px 50px; max-width: 760px; }
+  .cat-card{
+    background: var(--card); border: 1px solid var(--line);
+    padding: 22px 16px; border-radius: 4px; text-align:center; cursor:pointer;
+  }
+  .cat-card .tag{ font-family:-apple-system, sans-serif; font-size:11px; color: var(--red); margin-bottom:6px; letter-spacing:.3px; }
+  .cat-card h3{ font-size: 19px; font-weight: 400; }
+  .cat-card p{ font-family:-apple-system, sans-serif; font-size:12px; color: var(--ink-soft); margin-top:4px; }
+
+  .category-header{ padding: 10px 24px 4px; max-width: 760px; }
+  .category-header h1{ font-size: 26px; font-weight: 400; }
+  .category-header .sub{ font-family:-apple-system, sans-serif; color:var(--ink-soft); font-size:13px; margin-bottom: 20px; }
+
+  .accordion{ padding: 0 24px 60px; max-width: 760px; }
+  .chap{ border: 1px solid var(--line); border-radius: 3px; margin-bottom: 10px; background: var(--card); overflow:hidden; }
+  .chap-head{
+    padding: 14px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+    font-family: -apple-system, sans-serif;
+  }
+  .chap-head .num{ color: var(--red); font-weight:600; margin-right:8px; }
+  .chap-head .arrow{ color: var(--ink-soft); transition: transform .15s; }
+  .chap.open .chap-head .arrow{ transform: rotate(90deg); }
+  .chap-body{ display:none; padding: 0 18px 18px; border-top: 1px solid var(--line); }
+  .chap.open .chap-body{ display:block; padding-top:14px; }
+  .chap-body h4{ font-size:16px; font-weight:600; margin: 12px 0 6px; }
+  .chap-body h4:first-child{ margin-top:0; }
+  .chap-body p, .chap-body li{ font-size: 15px; }
+  .chap-body ul{ padding-left: 20px; margin-bottom: 8px; }
+
+  .pyq{ border-left: 3px solid var(--red); padding: 10px 12px; margin-bottom: 8px; background: #FBF7EC; border-radius: 3px; }
+  .pyq .ptag{ font-family: -apple-system, sans-serif; font-size: 11px; color: var(--red); margin-bottom: 3px; }
+
+  footer{ text-align:center; padding: 30px; font-family:-apple-system, sans-serif; font-size: 12.5px; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Kholkar<span>.</span>Notes</div>
+  <nav>B.Com Prog &amp; Hons</nav>
+</header>
+
+<div class="view active" id="view-gate">
+  <div class="gate-wrap">
+    <div class="gate-box">
+      <span class="stamp">Free access</span>
+      <h1>Hey! Let's get you set up.</h1>
+      <p>A couple of quick details so we can show you the right semester's material and help you in the best way possible.</p>
+      <div class="field">
+        <label>What should we call you?</label>
+        <input type="text" id="gateName" placeholder="e.g. Vansh Sharma">
+      </div>
+      <div class="field">
+        <label>Your phone number</label>
+        <input type="tel" id="gatePhone" placeholder="10-digit mobile number">
+      </div>
+      <div class="field">
+        <label>Which semester are you in right now?</label>
+        <input type="number" id="gateSem" min="1" max="8" placeholder="e.g. 3">
+      </div>
+      <button class="gate-btn" onclick="submitGate()">Continue →</button>
+      <div class="gate-err" id="gateErr">Just need all three filled in — semester should be between 1 and 8.</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-home">
+  <section class="hero">
+    <span class="stamp" id="homeStamp">Sem 1 · Live now</span>
+    <h1>Clear your semester without <em>10k coaching</em> or 40 hours of lectures.</h1>
+    <p>Short, exam-ready notes, must-do topics, and verified previous-year questions for B.Com Prog and B.Com (Hons).</p>
+  </section>
+  <div class="section-title">
+    <span id="homeSectionTitle">SEMESTER 1 · CORE SUBJECTS</span>
+    <span class="switch-sem" onclick="switchView('view-gate')">change semester</span>
+  </div>
+  <div class="grid" id="subjectGrid"></div>
+</div>
+
+<div class="view" id="view-subject">
+  <a class="back-link" onclick="switchView('view-home')">← All subjects</a>
+  <div class="subject-header">
+    <h1 id="subjTitle">Financial Accounting</h1>
+    <div class="sub" id="subjSub">B.Com Prog &amp; Hons · Semester 1 · 6 chapters</div>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-card" onclick="openCategory('notes','Notes')">
+      <div class="tag">FULL DETAIL</div><h3>Notes</h3><p>All chapters</p>
+    </div>
+    <div class="cat-card" onclick="openCategory('key','Must Do Topics')">
+      <div class="tag">CAN'T SKIP</div><h3>Must Do Topics</h3><p>All chapters</p>
+    </div>
+    <div class="cat-card" onclick="openCategory('pyq','Repetitive PYQs')">
+      <div class="tag">VERIFIED</div><h3>Repetitive PYQs</h3><p>All chapters</p>
+    </div>
+    <div class="cat-card" onclick="openCategory('summary','Last Night Revision')">
+      <div class="tag">NIGHT OWL</div><h3>Last Night Revision</h3><p>All chapters</p>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-category">
+  <a class="back-link" onclick="switchView('view-subject')">← <span id="catBackName">Financial Accounting</span></a>
+  <div class="category-header">
+    <h1 id="catTitle">Notes</h1>
+    <div class="sub" id="catSub">tap a chapter to expand</div>
+  </div>
+  <div class="accordion" id="accordion"></div>
+</div>
+
+<footer>Made by a B.Com student, for B.Com students.</footer>
+
+<script>
+  const faChapters = [
+    {
+      num: 1,
+      title: "Introduction to Accounting",
+      notes: `<h4>Meaning of Accounting</h4><p>[Your researched explanation goes here.]</p>
+              <h4>Objectives of Accounting</h4><ul><li>[Point one]</li><li>[Point two]</li></ul>`,
+      summary: `<p>[3-4 line summary of the chapter.]</p>`,
+      key: `<ul><li>[Most important definition]</li><li>[Most important distinction]</li></ul>`,
+      pyq: `<div class="pyq"><div class="ptag">DEC 2023 · 5 MARKS</div><p>[Verified PYQ question]</p></div>
+            <div class="pyq"><div class="ptag">JUNE 2022 · 10 MARKS</div><p>[Verified PYQ question]</p></div>`
+    },
+    {
+      num: 2,
+      title: "Accounting Concepts & Conventions",
+      notes: `<p>[Add content]</p>`,
+      summary: `<p>[Add content]</p>`,
+      key: `<p>[Add content]</p>`,
+      pyq: `<p>[Add content]</p>`
+    }
+  ];
+
+  const subjects = [
+    { name: "Financial Accounting", sem: 1, desc: "6 chapters · Notes, Must Do Topics, PYQs & Revision", chapters: faChapters, live: true },
+    { name: "Business Organisation & Management", sem: 1, desc: "Coming soon", live: false },
+    { name: "Business Laws", sem: 1, desc: "Coming soon", live: false },
+    { name: "Corporate Accounting", sem: 2, desc: "Coming soon", live: false },
+    { name: "Company Law", sem: 2, desc: "Coming soon", live: false }
+  ];
+
+  let currentSemester = 1;
+  let currentSubject = null;
+
+  function submitGate(){
+    const name = document.getElementById('gateName').value.trim();
+    const phone = document.getElementById('gatePhone').value.trim();
+    const sem = parseInt(document.getElementById('gateSem').value, 10);
+    const err = document.getElementById('gateErr');
+
+    if(!name || phone.length < 10 || !sem || sem < 1 || sem > 8){
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+
+    localStorage.setItem('kn_name', name);
+    localStorage.setItem('kn_phone', phone);
+    localStorage.setItem('kn_sem', sem);
+    currentSemester = sem;
+
+    renderHome();
+    switchView('view-home');
+  }
+
+  function renderHome(){
+    document.getElementById('homeStamp').textContent = 'Sem ' + currentSemester + ' · Live now';
+    document.getElementById('homeSectionTitle').textContent = 'SEMESTER ' + currentSemester + ' · CORE SUBJECTS';
+
+    const grid = document.getElementById('subjectGrid');
+    const list = subjects.filter(s => s.sem === currentSemester);
+
+    if(list.length === 0){
+      grid.innerHTML = `<div class="empty-note">Nothing added for Semester ${currentSemester} yet — check back soon.</div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map((s, i) => {
+      const realIndex = subjects.indexOf(s);
+      return s.live
+        ? `<div class="card" onclick="openSubject(${realIndex})"><h3>${s.name}</h3><p>${s.desc}</p></div>`
+        : `<div class="card dim"><h3>${s.name}</h3><p>${s.desc}</p></div>`;
+    }).join('');
+  }
+
+  function openSubject(i){
+    currentSubject = subjects[i];
+    document.getElementById('subjTitle').textContent = currentSubject.name;
+    document.getElementById('subjSub').textContent = `B.Com Prog & Hons · Semester ${currentSubject.sem} · ${currentSubject.chapters.length} chapters`;
+    document.getElementById('catBackName').textContent = currentSubject.name;
+    switchView('view-subject');
+  }
+
+  function switchView(id){
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function openCategory(key, label){
+    document.getElementById('catTitle').textContent = label;
+    const acc = document.getElementById('accordion');
+    acc.innerHTML = currentSubject.chapters.map((c, i) => `
+      <div class="chap" id="chap-${i}">
+        <div class="chap-head" onclick="toggleChap(${i})">
+          <span><span class="num">Ch ${c.num}.</span>${c.title}</span>
+          <span class="arrow">›</span>
+        </div>
+        <div class="chap-body">${c[key]}</div>
+      </div>
+    `).join('');
+    switchView('view-category');
+  }
+
+  function toggleChap(i){
+    document.getElementById('chap-'+i).classList.toggle('open');
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedSem = localStorage.getItem('kn_sem');
+    if(savedSem){
+      currentSemester = parseInt(savedSem, 10);
+      renderHome();
+      switchView('view-home');
+    }
+  });
+</script>
+
+</body>
+</html>
