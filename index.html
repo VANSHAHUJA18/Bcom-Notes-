@@ -146,7 +146,8 @@
       <div class="field">
         <label>What should we call you?</label>
         <input type="text" id="gateName" placeholder="e.g. Vansh Sharma">
-      </div> class="field">
+      </div>
+      <div class="field">
         <label>Your phone number</label>
         <input type="tel" id="gatePhone" placeholder="10-digit mobile number">
       </div>
@@ -225,7 +226,8 @@
       summary: `<p>[3-4 line summary of the chapter.]</p>`,
       key: `<ul><li>[Most important definition]</li><li>[Most important distinction]</li></ul>`,
       pyq: `<div class="pyq"><div class="ptag">DEC 2023 · 5 MARKS</div><p>[Verified PYQ question]</p></div>
-            <div class="pyq"><div class="ptag">JUNE 2022 · 10 MARKS</div><p>[Verified PYQ question]</p></div>`},
+            <div class="pyq"><div class="ptag">JUNE 2022 · 10 MARKS</div><p>[Verified PYQ question]</p></div>`
+    },
     {
       num: 2,
       title: "Accounting Concepts & Conventions",
@@ -246,6 +248,7 @@
 
   let currentSemester = 1;
   let currentSubject = null;
+  let currentCategoryKey = 'notes';
 
   function submitGate(){
     const name = document.getElementById('gateName').value.trim();
@@ -302,8 +305,6 @@
     window.scrollTo(0,0);
   }
 
-  let currentCategoryKey = 'notes';
-
   function openCategory(key, label){
     currentCategoryKey = key;
     document.getElementById('catTitle').textContent = label;
@@ -338,5 +339,4 @@
 </script>
 
 </body>
-</html>
-      
+  </html>
