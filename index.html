@@ -140,3 +140,203 @@
 <div class="view active" id="view-gate">
   <div class="gate-wrap">
     <div class="gate-box">
+      <span class="stamp">Free access</span>
+      <h1>Hey! Let's get you set up.</h1>
+      <p>A couple of quick details so we can show you the right semester's material and help you in the best way possible.</p>
+      <div class="field">
+        <label>What should we call you?</label>
+        <input type="text" id="gateName" placeholder="e.g. Vansh Sharma">
+      </div> class="field">
+        <label>Your phone number</label>
+        <input type="tel" id="gatePhone" placeholder="10-digit mobile number">
+      </div>
+      <div class="field">
+        <label>Which semester are you in right now?</label>
+        <input type="number" id="gateSem" min="1" max="8" placeholder="e.g. 3">
+      </div>
+      <button class="gate-btn" onclick="submitGate()">Continue →</button>
+      <div class="gate-err" id="gateErr">Just need all three filled in — semester should be between 1 and 8.</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-home">
+  <section class="hero">
+    <span class="stamp" id="homeStamp">Sem 1 · Live now</span>
+    <h1>Clear your semester without <em>10k coaching</em> or 40 hours of lectures.</h1>
+    <p>Short, exam-ready notes, must-do topics, and verified previous-year questions for B.Com Prog and B.Com (Hons).</p>
+  </section>
+  <div class="section-title">
+    <span id="homeSectionTitle">SEMESTER 1 · CORE SUBJECTS</span>
+    <span class="switch-sem" onclick="switchView('view-gate')">change semester</span>
+  </div>
+  <div class="grid" id="subjectGrid"></div>
+</div>
+
+<div class="view" id="view-subject">
+  <a class="back-link" onclick="switchView('view-home')">← All subjects</a>
+  <div class="subject-header">
+    <h1 id="subjTitle">Financial Accounting</h1>
+    <div class="sub" id="subjSub">B.Com Prog &amp; Hons · Semester 1 · 6 chapters</div>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-card" onclick="openCategory('notes','Notes')">
+      <div class="tag">FULL DETAIL</div><h3>Notes</h3><p>All chapters</p>
+    </div>
+    <div class="cat-card" onclick="openCategory('key','Must Do Topics')">
+      <div class="tag">CAN'T SKIP</div><h3>Must Do Topics</h3><p>All chapters</p>
+    </div>
+    <div class="cat-card" onclick="openCategory('pyq','Repetitive PYQs')">
+      <div class="tag">VERIFIED</div><h3>Repetitive PYQs</h3><p>All chapters</p>
+    </div>
+    <div class="cat-card" onclick="openCategory('summary','1-Day Pass Plan')">
+      <div class="tag">HURRY UP</div><h3>1-Day Pass Plan</h3><p>All chapters</p>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-category">
+  <a class="back-link" onclick="switchView('view-subject')">← <span id="catBackName">Financial Accounting</span></a>
+  <div class="category-header">
+    <h1 id="catTitle">Notes</h1>
+    <div class="sub" id="catSub">tap a chapter to open</div>
+  </div>
+  <div class="accordion" id="accordion"></div>
+</div>
+
+<div class="view" id="view-chapter">
+  <a class="back-link" onclick="switchView('view-category')">← <span id="chapBackName">Notes</span></a>
+  <div class="chapter-detail">
+    <h1 id="chapTitle">Chapter 1</h1>
+    <div class="sub" id="chapSub">Financial Accounting</div>
+    <div id="chapBody"></div>
+  </div>
+</div>
+
+<footer>Made by a B.Com student, for B.Com students.</footer>
+
+<script>
+  const faChapters = [
+    {
+      num: 1,
+      title: "Introduction to Accounting",
+      notes: `<h4>Meaning of Accounting</h4><p>[Your researched explanation goes here.]</p>
+              <h4>Objectives of Accounting</h4><ul><li>[Point one]</li><li>[Point two]</li></ul>`,
+      summary: `<p>[3-4 line summary of the chapter.]</p>`,
+      key: `<ul><li>[Most important definition]</li><li>[Most important distinction]</li></ul>`,
+      pyq: `<div class="pyq"><div class="ptag">DEC 2023 · 5 MARKS</div><p>[Verified PYQ question]</p></div>
+            <div class="pyq"><div class="ptag">JUNE 2022 · 10 MARKS</div><p>[Verified PYQ question]</p></div>`},
+    {
+      num: 2,
+      title: "Accounting Concepts & Conventions",
+      notes: `<p>[Add content]</p>`,
+      summary: `<p>[Add content]</p>`,
+      key: `<p>[Add content]</p>`,
+      pyq: `<p>[Add content]</p>`
+    }
+  ];
+
+  const subjects = [
+    { name: "Financial Accounting", sem: 1, desc: "6 chapters · Notes, Must Do Topics, PYQs & Revision", chapters: faChapters, live: true },
+    { name: "Business Organisation & Management", sem: 1, desc: "Coming soon", live: false },
+    { name: "Business Laws", sem: 1, desc: "Coming soon", live: false },
+    { name: "Corporate Accounting", sem: 2, desc: "Coming soon", live: false },
+    { name: "Company Law", sem: 2, desc: "Coming soon", live: false }
+  ];
+
+  let currentSemester = 1;
+  let currentSubject = null;
+
+  function submitGate(){
+    const name = document.getElementById('gateName').value.trim();
+    const phone = document.getElementById('gatePhone').value.trim();
+    const sem = parseInt(document.getElementById('gateSem').value, 10);
+    const err = document.getElementById('gateErr');
+
+    if(!name || phone.length < 10 || !sem || sem < 1 || sem > 8){
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+
+    localStorage.setItem('kn_name', name);
+    localStorage.setItem('kn_phone', phone);
+    localStorage.setItem('kn_sem', sem);
+    currentSemester = sem;
+
+    renderHome();
+    switchView('view-home');
+  }
+
+  function renderHome(){
+    document.getElementById('homeStamp').textContent = 'Sem ' + currentSemester + ' · Live now';
+    document.getElementById('homeSectionTitle').textContent = 'SEMESTER ' + currentSemester + ' · CORE SUBJECTS';
+
+    const grid = document.getElementById('subjectGrid');
+    const list = subjects.filter(s => s.sem === currentSemester);
+
+    if(list.length === 0){
+      grid.innerHTML = `<div class="empty-note">Nothing added for Semester ${currentSemester} yet — check back soon.</div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map((s, i) => {
+      const realIndex = subjects.indexOf(s);
+      return s.live
+        ? `<div class="card" onclick="openSubject(${realIndex})"><h3>${s.name}</h3><p>${s.desc}</p></div>`
+        : `<div class="card dim"><h3>${s.name}</h3><p>${s.desc}</p></div>`;
+    }).join('');
+  }
+
+  function openSubject(i){
+    currentSubject = subjects[i];
+    document.getElementById('subjTitle').textContent = currentSubject.name;
+    document.getElementById('subjSub').textContent = `B.Com Prog & Hons · Semester ${currentSubject.sem} · ${currentSubject.chapters.length} chapters`;
+    document.getElementById('catBackName').textContent = currentSubject.name;
+    switchView('view-subject');
+  }
+
+  function switchView(id){
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  let currentCategoryKey = 'notes';
+
+  function openCategory(key, label){
+    currentCategoryKey = key;
+    document.getElementById('catTitle').textContent = label;
+    const acc = document.getElementById('accordion');
+    acc.innerHTML = currentSubject.chapters.map((c, i) => `
+      <div class="chap-row" onclick="openChapterDetail(${i})">
+        <span><span class="num">Ch ${c.num}.</span>${c.title}</span>
+        <span class="arrow">›</span>
+      </div>
+    `).join('');
+    switchView('view-category');
+  }
+
+  function openChapterDetail(i){
+    const c = currentSubject.chapters[i];
+    const catLabel = document.getElementById('catTitle').textContent;
+    document.getElementById('chapTitle').textContent = `Ch ${c.num}. ${c.title}`;
+    document.getElementById('chapSub').textContent = `${currentSubject.name} · ${catLabel}`;
+    document.getElementById('chapBackName').textContent = catLabel;
+    document.getElementById('chapBody').innerHTML = c[currentCategoryKey];
+    switchView('view-chapter');
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedSem = localStorage.getItem('kn_sem');
+    if(savedSem){
+      currentSemester = parseInt(savedSem, 10);
+      renderHome();
+      switchView('view-home');
+    }
+  });
+</script>
+
+</body>
+</html>
+      
