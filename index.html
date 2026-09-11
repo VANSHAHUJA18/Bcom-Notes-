@@ -1,9 +1,9 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kholkar Notes — B.Com Prog & Hons Made Simple</title>
+<title>B.Com Prog & Hons Made Simple</title>
 <style>
   :root{
     --paper: #F6F1E4;
@@ -31,7 +31,8 @@ DOCTYPE html>
   header .brand{ font-size: 22px; font-weight:700; }
   header .brand span{ color: var(--red); }
   header nav{ font-family: -apple-system, sans-serif; font-size: 14px; color: var(--ink-soft); }
-view{ display:none; }
+
+  .view{ display:none; }
   .view.active{ display:block; }
 
   .gate-wrap{ min-height: 78vh; display:flex; align-items:center; justify-content:center; padding: 24px; }
@@ -107,20 +108,21 @@ view{ display:none; }
   .category-header .sub{ font-family:-apple-system, sans-serif; color:var(--ink-soft); font-size:13px; margin-bottom: 20px; }
 
   .accordion{ padding: 0 24px 60px; max-width: 760px; }
-  .chap{ border: 1px solid var(--line); border-radius: 3px; margin-bottom: 10px; background: var(--card); overflow:hidden; }
-  .chap-head{
-    padding: 14px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  .chap-row{
+    border: 1px solid var(--line); border-radius: 3px; margin-bottom: 10px; background: var(--card);
+    padding: 15px 16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;
     font-family: -apple-system, sans-serif;
   }
-  .chap-head .num{ color: var(--red); font-weight:600; margin-right:8px; }
-  .chap-head .arrow{ color: var(--ink-soft); transition: transform .15s; }
-  .chap.open .chap-head .arrow{ transform: rotate(90deg); }
-  .chap-body{ display:none; padding: 0 18px 18px; border-top: 1px solid var(--line); }
-  .chap.open .chap-body{ display:block; padding-top:14px; }
-  .chap-body h4{ font-size:16px; font-weight:600; margin: 12px 0 6px; }
-  .chap-body h4:first-child{ margin-top:0; }
-  .chap-body p, .chap-body li{ font-size: 15px; }
-  .chap-body ul{ padding-left: 20px; margin-bottom: 8px; }
+  .chap-row .num{ color: var(--red); font-weight:600; margin-right:8px; }
+  .chap-row .arrow{ color: var(--ink-soft); }
+
+  .chapter-detail{ padding: 10px 24px 60px; max-width: 760px; }
+  .chapter-detail h1{ font-size: 24px; font-weight: 400; margin: 6px 0 4px; }
+  .chapter-detail .sub{ font-family:-apple-system, sans-serif; color:var(--ink-soft); font-size:13px; margin-bottom: 22px; }
+  .chapter-detail h4{ font-size:16px; font-weight:600; margin: 12px 0 6px; }
+  .chapter-detail h4:first-child{ margin-top:0; }
+  .chapter-detail p, .chapter-detail li{ font-size: 15.5px; }
+  .chapter-detail ul{ padding-left: 20px; margin-bottom: 8px; }
 
   .pyq{ border-left: 3px solid var(--red); padding: 10px 12px; margin-bottom: 8px; background: #FBF7EC; border-radius: 3px; }
   .pyq .ptag{ font-family: -apple-system, sans-serif; font-size: 11px; color: var(--red); margin-bottom: 3px; }
@@ -131,7 +133,7 @@ view{ display:none; }
 <body>
 
 <header>
-  <div class="brand">Kholkar<span>.</span>Notes</div>
+  <div class="brand">B.Com<span>.</span>Notes</div>
   <nav>B.Com Prog &amp; Hons</nav>
 </header>
 
@@ -198,9 +200,18 @@ view{ display:none; }
   <a class="back-link" onclick="switchView('view-subject')">← <span id="catBackName">Financial Accounting</span></a>
   <div class="category-header">
     <h1 id="catTitle">Notes</h1>
-    <div class="sub" id="catSub">tap a chapter to expand</div>
+    <div class="sub" id="catSub">tap a chapter to open</div>
   </div>
   <div class="accordion" id="accordion"></div>
+</div>
+
+<div class="view" id="view-chapter">
+  <a class="back-link" onclick="switchView('view-category')">← <span id="chapBackName">Notes</span></a>
+  <div class="chapter-detail">
+    <h1 id="chapTitle">Chapter 1</h1>
+    <div class="sub" id="chapSub">Financial Accounting</div>
+    <div id="chapBody"></div>
+  </div>
 </div>
 
 <footer>Made by a B.Com student, for B.Com students.</footer>
@@ -237,6 +248,7 @@ view{ display:none; }
 
   let currentSemester = 1;
   let currentSubject = null;
+  let currentCategoryKey = 'notes';
 
   function submitGate(){
     const name = document.getElementById('gateName').value.trim();
@@ -294,22 +306,26 @@ view{ display:none; }
   }
 
   function openCategory(key, label){
+    currentCategoryKey = key;
     document.getElementById('catTitle').textContent = label;
     const acc = document.getElementById('accordion');
     acc.innerHTML = currentSubject.chapters.map((c, i) => `
-      <div class="chap" id="chap-${i}">
-        <div class="chap-head" onclick="toggleChap(${i})">
-          <span><span class="num">Ch ${c.num}.</span>${c.title}</span>
-          <span class="arrow">›</span>
-        </div>
-        <div class="chap-body">${c[key]}</div>
+      <div class="chap-row" onclick="openChapterDetail(${i})">
+        <span><span class="num">Ch ${c.num}.</span>${c.title}</span>
+        <span class="arrow">›</span>
       </div>
     `).join('');
     switchView('view-category');
   }
 
-  function toggleChap(i){
-    document.getElementById('chap-'+i).classList.toggle('open');
+  function openChapterDetail(i){
+    const c = currentSubject.chapters[i];
+    const catLabel = document.getElementById('catTitle').textContent;
+    document.getElementById('chapTitle').textContent = `Ch ${c.num}. ${c.title}`;
+    document.getElementById('chapSub').textContent = `${currentSubject.name} · ${catLabel}`;
+    document.getElementById('chapBackName').textContent = catLabel;
+    document.getElementById('chapBody').innerHTML = c[currentCategoryKey];
+    switchView('view-chapter');
   }
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -323,4 +339,4 @@ view{ display:none; }
 </script>
 
 </body>
-</html>
+      </html>
